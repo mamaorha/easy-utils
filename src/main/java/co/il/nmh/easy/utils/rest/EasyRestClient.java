@@ -1,7 +1,5 @@
 package co.il.nmh.easy.utils.rest;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -10,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import co.il.nmh.easy.utils.EasyUtils;
 import co.il.nmh.easy.utils.exceptions.RestException;
 import co.il.nmh.easy.utils.rest.data.EasyRestHeader;
 import co.il.nmh.easy.utils.rest.data.RestClientResponse;
@@ -91,22 +90,7 @@ public class EasyRestClient
 				inputStream = httpCon.getErrorStream();
 			}
 
-			BufferedInputStream reader = new BufferedInputStream(inputStream);
-
-			ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-
-			int nRead;
-			byte[] data = new byte[16384];
-
-			while ((nRead = reader.read(data, 0, data.length)) != -1)
-			{
-				buffer.write(data, 0, nRead);
-			}
-
-			buffer.flush();
-			reader.close();
-
-			byte[] response = buffer.toByteArray();
+			byte[] response = EasyUtils.inputStreamToBytes(inputStream);
 
 			Map<String, List<String>> headerFields = httpCon.getHeaderFields();
 
