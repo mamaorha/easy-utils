@@ -1,5 +1,6 @@
 package co.il.nmh.easy.utils.rest;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -8,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import co.il.nmh.easy.utils.EasyInputStream;
 import co.il.nmh.easy.utils.EasyUtils;
 import co.il.nmh.easy.utils.exceptions.RestException;
 import co.il.nmh.easy.utils.rest.data.EasyRestHeader;
@@ -21,10 +23,25 @@ public class EasyRestClient
 {
 	public static RestClientResponse execute(String url, String method, EasyRestHeader headers, byte[] payload) throws RestException
 	{
-		return execute(url, method, headers.getHeaders(), payload);
+		return executeRest(url, method, headers.getHeaders(), payload);
 	}
 
 	public static RestClientResponse execute(String url, String method, Map<String, List<String>> headers, byte[] payload) throws RestException
+	{
+		return executeRest(url, method, headers, payload);
+	}
+
+	public static RestClientResponse execute(String url, String method, EasyRestHeader headers, EasyInputStream payload) throws RestException
+	{
+		return executeRest(url, method, headers.getHeaders(), payload);
+	}
+
+	public static RestClientResponse execute(String url, String method, Map<String, List<String>> headers, EasyInputStream payload) throws RestException
+	{
+		return executeRest(url, method, headers, payload);
+	}
+
+	private static RestClientResponse executeRest(String url, String method, Map<String, List<String>> headers, Object payload) throws RestException
 	{
 		try
 		{
@@ -33,64 +50,25 @@ public class EasyRestClient
 			HttpURLConnection httpCon = (HttpURLConnection) urlObj.openConnection();
 			httpCon.setRequestMethod(method);
 
-			for (Entry<String, List<String>> headerEntry : headers.entrySet())
-			{
-				List<String> values = headerEntry.getValue();
+			writeHeaders(headers, httpCon);
 
-				if (values.isEmpty())
+			if (null != payload)
+			{
+				if (payload instanceof EasyInputStream)
 				{
-					continue;
+					EasyInputStream easyInputStream = (EasyInputStream) payload;
+					writePayload(httpCon, easyInputStream);
 				}
 				else
 				{
-					String headerName = headerEntry.getKey();
-
-					if (values.size() == 1)
-					{
-						httpCon.setRequestProperty(headerName, values.get(0));
-					}
-
-					else
-					{
-						StringBuilder headerValue = new StringBuilder("[");
-
-						for (String value : values)
-						{
-							headerValue.append(value).append(",");
-						}
-
-						headerValue.delete(headerValue.length() - 1, headerValue.length());
-						headerValue.append("]");
-
-						httpCon.setRequestProperty(headerName, headerValue.toString());
-					}
+					byte[] payloadBytes = (byte[]) payload;
+					writePayload(httpCon, payloadBytes);
 				}
-			}
-
-			if (null != payload && payload.length > 0)
-			{
-				httpCon.setDoOutput(true);
-
-				OutputStream outputStream = httpCon.getOutputStream();
-				outputStream.write(payload);
-				outputStream.flush();
-				outputStream.close();
 			}
 
 			int responseCode = httpCon.getResponseCode();
 
-			InputStream inputStream = null;
-
-			try
-			{
-				inputStream = httpCon.getInputStream();
-			}
-			catch (Exception e)
-			{
-				inputStream = httpCon.getErrorStream();
-			}
-
-			byte[] response = EasyUtils.inputStreamToBytes(inputStream);
+			byte[] response = extractResponse(httpCon);
 
 			Map<String, List<String>> headerFields = httpCon.getHeaderFields();
 
@@ -100,5 +78,95 @@ public class EasyRestClient
 		{
 			throw new RestException(e);
 		}
+	}
+
+	private static void writeHeaders(Map<String, List<String>> headers, HttpURLConnection httpCon)
+	{
+		for (Entry<String, List<String>> headerEntry : headers.entrySet())
+		{
+			List<String> values = headerEntry.getValue();
+
+			if (values.isEmpty())
+			{
+				continue;
+			}
+			else
+			{
+				String headerName = headerEntry.getKey();
+
+				if (values.size() == 1)
+				{
+					httpCon.setRequestProperty(headerName, values.get(0));
+				}
+
+				else
+				{
+					StringBuilder headerValue = new StringBuilder("[");
+
+					for (String value : values)
+					{
+						headerValue.append(value).append(",");
+					}
+
+					headerValue.delete(headerValue.length() - 1, headerValue.length());
+					headerValue.append("]");
+
+					httpCon.setRequestProperty(headerName, headerValue.toString());
+				}
+			}
+		}
+	}
+
+	private static void writePayload(HttpURLConnection httpCon, EasyInputStream easyInputStream) throws IOException
+	{
+		easyInputStream.reset();
+
+		if (easyInputStream.available() > -1)
+		{
+			httpCon.setDoOutput(true);
+
+			OutputStream outputStream = httpCon.getOutputStream();
+
+			int nRead;
+			byte[] data = new byte[16384];
+
+			while ((nRead = easyInputStream.read(data, 0, data.length)) != -1)
+			{
+				outputStream.write(data, 0, nRead);
+			}
+
+			outputStream.flush();
+			outputStream.close();
+		}
+	}
+
+	private static void writePayload(HttpURLConnection httpCon, byte[] payload) throws IOException
+	{
+		if (payload.length > 0)
+		{
+			httpCon.setDoOutput(true);
+
+			OutputStream outputStream = httpCon.getOutputStream();
+			outputStream.write(payload);
+			outputStream.flush();
+			outputStream.close();
+		}
+	}
+
+	private static byte[] extractResponse(HttpURLConnection httpCon) throws IOException
+	{
+		InputStream inputStream = null;
+
+		try
+		{
+			inputStream = httpCon.getInputStream();
+		}
+		catch (Exception e)
+		{
+			inputStream = httpCon.getErrorStream();
+		}
+
+		byte[] response = EasyUtils.inputStreamToBytes(inputStream);
+		return response;
 	}
 }
