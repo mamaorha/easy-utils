@@ -120,7 +120,7 @@ public class EasyRestClient
 	{
 		easyInputStream.reset();
 
-		if (easyInputStream.available() > -1)
+		if (easyInputStream.available() > 0)
 		{
 			httpCon.setDoOutput(true);
 
