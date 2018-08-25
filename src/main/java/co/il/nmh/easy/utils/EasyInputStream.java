@@ -152,9 +152,11 @@ public class EasyInputStream extends InputStream
 	@Override
 	public synchronized void reset() throws IOException
 	{
-		position = 0;
-		subBuffer = new ByteArrayInputStream(buffer.toByteArray());
-
+		if (position > 0)
+		{
+			position = 0;
+			subBuffer = new ByteArrayInputStream(buffer.toByteArray());
+		}
 		// inputStream.reset();
 	}
 
