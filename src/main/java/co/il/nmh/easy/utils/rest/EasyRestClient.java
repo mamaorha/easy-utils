@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import co.il.nmh.easy.utils.EasyInputStream;
-import co.il.nmh.easy.utils.EasyUtils;
 import co.il.nmh.easy.utils.exceptions.RestException;
 import co.il.nmh.easy.utils.rest.data.EasyRestHeader;
 import co.il.nmh.easy.utils.rest.data.RestClientResponse;
@@ -68,7 +67,7 @@ public class EasyRestClient
 
 			int responseCode = httpCon.getResponseCode();
 
-			byte[] response = extractResponse(httpCon);
+			EasyInputStream response = extractResponse(httpCon);
 
 			Map<String, List<String>> headerFields = httpCon.getHeaderFields();
 
@@ -153,7 +152,7 @@ public class EasyRestClient
 		}
 	}
 
-	private static byte[] extractResponse(HttpURLConnection httpCon) throws IOException
+	private static EasyInputStream extractResponse(HttpURLConnection httpCon) throws IOException
 	{
 		InputStream inputStream = null;
 
@@ -166,7 +165,6 @@ public class EasyRestClient
 			inputStream = httpCon.getErrorStream();
 		}
 
-		byte[] response = EasyUtils.inputStreamToBytes(inputStream);
-		return response;
+		return new EasyInputStream(inputStream);
 	}
 }
