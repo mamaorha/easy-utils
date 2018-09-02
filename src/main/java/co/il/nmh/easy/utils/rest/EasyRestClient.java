@@ -20,14 +20,9 @@ import co.il.nmh.easy.utils.rest.data.RestClientResponse;
 
 public class EasyRestClient
 {
-	public static RestClientResponse execute(String url, String method, EasyRestHeader headers, byte[] payload) throws RestException
+	public static RestClientResponse execute(String url, String method, EasyRestHeader headers) throws RestException
 	{
-		return executeRest(url, method, headers.getHeaders(), payload);
-	}
-
-	public static RestClientResponse execute(String url, String method, Map<String, List<String>> headers, byte[] payload) throws RestException
-	{
-		return executeRest(url, method, headers, payload);
+		return executeRest(url, method, headers.getHeaders(), null);
 	}
 
 	public static RestClientResponse execute(String url, String method, EasyRestHeader headers, EasyInputStream payload) throws RestException
@@ -35,7 +30,22 @@ public class EasyRestClient
 		return executeRest(url, method, headers.getHeaders(), payload);
 	}
 
+	public static RestClientResponse execute(String url, String method, EasyRestHeader headers, byte[] payload) throws RestException
+	{
+		return executeRest(url, method, headers.getHeaders(), payload);
+	}
+
+	public static RestClientResponse execute(String url, String method, Map<String, List<String>> headers) throws RestException
+	{
+		return executeRest(url, method, headers, null);
+	}
+
 	public static RestClientResponse execute(String url, String method, Map<String, List<String>> headers, EasyInputStream payload) throws RestException
+	{
+		return executeRest(url, method, headers, payload);
+	}
+
+	public static RestClientResponse execute(String url, String method, Map<String, List<String>> headers, byte[] payload) throws RestException
 	{
 		return executeRest(url, method, headers, payload);
 	}
