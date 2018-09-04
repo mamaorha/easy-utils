@@ -1,5 +1,6 @@
 package co.il.nmh.easy.utils;
 
+import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
 import lombok.extern.slf4j.Slf4j;
@@ -10,9 +11,9 @@ import lombok.extern.slf4j.Slf4j;
  */
 
 @Slf4j
-public abstract class EasyRetry<T>
+public class EasyRetry
 {
-	public T run(Integer retries, Integer sleepSeconds)
+	public <T> T run(Callable<T> callable, Integer retries, Integer sleepSeconds) throws Exception
 	{
 		if (retries < 1)
 		{
@@ -28,7 +29,7 @@ public abstract class EasyRetry<T>
 		{
 			try
 			{
-				return execute();
+				return callable.call();
 			}
 
 			catch (Exception e)
@@ -55,6 +56,4 @@ public abstract class EasyRetry<T>
 
 		return null;
 	}
-
-	protected abstract T execute();
 }
