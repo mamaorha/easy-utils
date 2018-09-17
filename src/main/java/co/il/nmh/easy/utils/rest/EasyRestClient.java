@@ -103,24 +103,9 @@ public class EasyRestClient
 			{
 				String headerName = headerEntry.getKey();
 
-				if (values.size() == 1)
+				for (String value : values)
 				{
-					httpCon.setRequestProperty(headerName, values.get(0));
-				}
-
-				else
-				{
-					StringBuilder headerValue = new StringBuilder("[");
-
-					for (String value : values)
-					{
-						headerValue.append(value).append(",");
-					}
-
-					headerValue.delete(headerValue.length() - 1, headerValue.length());
-					headerValue.append("]");
-
-					httpCon.setRequestProperty(headerName, headerValue.toString());
+					httpCon.addRequestProperty(headerName, value);
 				}
 			}
 		}
