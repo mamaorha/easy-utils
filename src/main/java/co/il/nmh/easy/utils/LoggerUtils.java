@@ -18,18 +18,34 @@ public class LoggerUtils
 {
 	public static final LoggerUtils INSTANCE = new LoggerUtils();
 
+	private boolean log4jAvailable;
+
 	private ILoggerFactory loggerContext;
 	private Method setLevel;
 	private Map<String, Object> levelMap;
 
 	private LoggerUtils()
 	{
-		loggerContext = LoggerFactory.getILoggerFactory();
-		levelMap = new ConcurrentHashMap<>();
+		try
+		{
+			loggerContext = LoggerFactory.getILoggerFactory();
+			levelMap = new ConcurrentHashMap<>();
+
+			log4jAvailable = true;
+		}
+		catch (NoClassDefFoundError e)
+		{
+			System.out.println("couldn't find " + e.getMessage() + ", LoggerUtils functionality is unavailable");
+		}
 	}
 
 	public void overrideLoggerLevel(String loggerPackage, String level)
 	{
+		if (!log4jAvailable)
+		{
+			return;
+		}
+
 		Logger logger = loggerContext.getLogger(loggerPackage);
 
 		if (null == setLevel)
