@@ -30,6 +30,12 @@ public class ResourceUtils
 		return EasyUtils.readInputStream(resourceAsStream);
 	}
 
+	public static InputStream getResourceAsStream(String fileName)
+	{
+		InputStream resourceAsStream = getDefaultClassLoader().getResourceAsStream(fileName);
+		return resourceAsStream;
+	}
+
 	// this code was taken from org.springframework.util.ClassUtils
 	public static ClassLoader getDefaultClassLoader()
 	{
