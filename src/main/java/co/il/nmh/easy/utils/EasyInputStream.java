@@ -4,6 +4,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 
 /**
  * @author Maor Hamami
@@ -17,6 +20,20 @@ public class EasyInputStream extends InputStream
 	private int position;
 	private int inputStreamPosition;
 	private ByteArrayInputStream subBuffer;
+
+	public static EasyInputStream buildInputStream(Serializable object) throws IOException
+	{
+		try (ByteArrayOutputStream bos = new ByteArrayOutputStream(); ObjectOutput out = new ObjectOutputStream(bos))
+		{
+			out.writeObject(object);
+			return new EasyInputStream(new ByteArrayInputStream(bos.toByteArray()));
+		}
+	}
+
+	public EasyInputStream(byte[] bytes)
+	{
+		this(new ByteArrayInputStream(bytes));
+	}
 
 	public EasyInputStream(InputStream inputStream)
 	{
