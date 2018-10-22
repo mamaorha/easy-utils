@@ -124,7 +124,7 @@ public class FileUtils
 			deleteDirectory(dir);
 		}
 
-		return dir.exists();
+		return !dir.exists();
 	}
 
 	private static boolean deleteDirectory(File dir)
