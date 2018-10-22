@@ -115,4 +115,35 @@ public class FileUtils
 
 		return true;
 	}
+
+	public static boolean deleteDir(File dir)
+	{
+		// try 3 times
+		for (int i = 0; i < 3 && dir.exists(); i++)
+		{
+			deleteDirectory(dir);
+		}
+
+		return dir.exists();
+	}
+
+	private static boolean deleteDirectory(File dir)
+	{
+		if (dir.isDirectory())
+		{
+			String[] children = dir.list();
+
+			for (int i = 0; i < children.length; i++)
+			{
+				boolean success = deleteDir(new File(dir, children[i]));
+
+				if (!success)
+				{
+					return false;
+				}
+			}
+		}
+
+		return dir.delete();
+	}
 }
