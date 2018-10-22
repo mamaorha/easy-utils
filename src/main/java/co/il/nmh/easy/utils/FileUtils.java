@@ -103,14 +103,14 @@ public class FileUtils
 
 		for (int i = 0; i < dirs.length; i++)
 		{
-			File dir = new File(basePath + File.separator + dirs[i]);
+			File dir = new File(basePath + dirs[i]);
 
 			if ((!dir.exists() && !dir.mkdir()) || !dir.isDirectory())
 			{
 				return false;
 			}
 
-			basePath = dir.getPath();
+			basePath = dir.getPath() + File.separator;
 		}
 
 		return true;
