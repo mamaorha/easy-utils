@@ -33,6 +33,11 @@ public abstract class EasyThread extends Thread
 		}
 	}
 
+	public void softInterrupt()
+	{
+		this.aliveIndicator.set(false);
+	}
+
 	public void setSleepMS(long sleepMS)
 	{
 		if (sleepMS > 0)
