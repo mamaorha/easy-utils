@@ -8,6 +8,8 @@ import java.net.URL;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -21,6 +23,7 @@ import javax.net.ssl.X509TrustManager;
 
 import co.il.nmh.easy.utils.EasyInputStream;
 import co.il.nmh.easy.utils.exceptions.RestException;
+import co.il.nmh.easy.utils.rest.data.EasyRestFormData;
 import co.il.nmh.easy.utils.rest.data.EasyRestHeader;
 import co.il.nmh.easy.utils.rest.data.RestClientResponse;
 
@@ -89,6 +92,25 @@ public class EasyRestClient
 	public static RestClientResponse execute(String url, String method, Map<String, List<String>> headers) throws RestException
 	{
 		return executeRest(url, method, headers, null);
+	}
+
+	public static RestClientResponse execute(String url, String method, Map<String, List<String>> headers, EasyRestFormData easyRestFormData) throws RestException
+	{
+		if (null == headers)
+		{
+			headers = new HashMap<>();
+		}
+
+		List<String> contentType = new ArrayList<>();
+		contentType.add("multipart/form-data; boundary=" + EasyRestFormData.BOUNDRY);
+
+		List<String> contentLength = new ArrayList<>();
+		contentLength.add(String.valueOf(easyRestFormData.length()));
+
+		headers.put("content-type", contentType);
+		headers.put("content-length", contentLength);
+
+		return executeRest(url, method, headers, easyRestFormData.getData().getBytes());
 	}
 
 	public static RestClientResponse execute(String url, String method, Map<String, List<String>> headers, EasyInputStream payload) throws RestException
