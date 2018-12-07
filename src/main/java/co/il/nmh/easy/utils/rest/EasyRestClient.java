@@ -33,6 +33,10 @@ import co.il.nmh.easy.utils.rest.data.RestClientResponse;
 
 public class EasyRestClient
 {
+	private EasyRestClient()
+	{
+	}
+
 	public static void allowAllSSL() throws KeyManagementException, NoSuchAlgorithmException
 	{
 		// Create a trust manager that does not validate certificate chains

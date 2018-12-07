@@ -198,4 +198,9 @@ public class EasyInputStream extends InputStream
 
 		return buffer.toByteArray();
 	}
+
+	public String getAllBytesString() throws IOException
+	{
+		return new String(getAllBytes());
+	}
 }
