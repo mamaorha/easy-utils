@@ -96,16 +96,21 @@ public class EasyInputStream extends InputStream
 		}
 		else
 		{
-			int nRead = inputStream.read(b, off, len);
-
-			if (nRead > -1)
+			if (inputStream.available() > 0)
 			{
-				position += nRead;
-				inputStreamPosition += nRead;
-				buffer.write(b, off, nRead);
+				int nRead = inputStream.read(b, off, len);
+
+				if (nRead > -1)
+				{
+					position += nRead;
+					inputStreamPosition += nRead;
+					buffer.write(b, off, nRead);
+				}
+
+				return nRead;
 			}
 
-			return nRead;
+			return -1;
 		}
 	}
 
