@@ -1,10 +1,10 @@
 package co.il.nmh.easy.utils.rest.data;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.ConcurrentHashMap;
 
 import lombok.ToString;
 
@@ -24,7 +24,7 @@ public class EasyRestHeader
 
 	public EasyRestHeader(Map<String, List<String>> headerFields)
 	{
-		headers = new ConcurrentHashMap<>();
+		headers = new LinkedHashMap<>();
 
 		if (null != headerFields)
 		{
