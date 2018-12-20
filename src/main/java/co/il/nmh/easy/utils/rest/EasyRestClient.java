@@ -155,10 +155,9 @@ public class EasyRestClient
 			int responseCode = httpCon.getResponseCode();
 
 			EasyInputStream response = extractResponse(httpCon);
+			EasyRestHeader easyRestHeader = new EasyRestHeader(httpCon.getHeaderFields());
 
-			Map<String, List<String>> headerFields = httpCon.getHeaderFields();
-
-			return new RestClientResponse(responseCode, headerFields, response);
+			return new RestClientResponse(responseCode, easyRestHeader, response);
 		}
 		catch (Exception e)
 		{

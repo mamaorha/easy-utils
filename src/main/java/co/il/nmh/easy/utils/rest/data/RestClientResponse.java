@@ -1,8 +1,5 @@
 package co.il.nmh.easy.utils.rest.data;
 
-import java.util.List;
-import java.util.Map;
-
 import co.il.nmh.easy.utils.EasyInputStream;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,6 +14,6 @@ import lombok.Data;
 public class RestClientResponse
 {
 	private int httpStatus;
-	private Map<String, List<String>> headerFields;
+	private EasyRestHeader headerFields;
 	private EasyInputStream responseBody;
 }
