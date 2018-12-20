@@ -33,6 +33,11 @@ public class EasyInputStream extends InputStream
 		}
 	}
 
+	public EasyInputStream(String body)
+	{
+		this(body.getBytes());
+	}
+
 	public EasyInputStream(byte[] bytes)
 	{
 		this(new ByteArrayInputStream(bytes));
