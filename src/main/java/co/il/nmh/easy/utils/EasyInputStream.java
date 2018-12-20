@@ -8,10 +8,13 @@ import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * @author Maor Hamami
  */
 
+@Slf4j
 public class EasyInputStream extends InputStream
 {
 	private InputStream inputStream;
@@ -96,7 +99,8 @@ public class EasyInputStream extends InputStream
 		}
 		else
 		{
-			if (inputStream.available() > 0)
+			// if (inputStream.available() > 0)
+			try
 			{
 				int nRead = inputStream.read(b, off, len);
 
@@ -108,6 +112,10 @@ public class EasyInputStream extends InputStream
 				}
 
 				return nRead;
+			}
+			catch (Exception e)
+			{
+				log.warn("failed to read more bytes from stream, error: {}", e.getMessage());
 			}
 
 			return -1;
