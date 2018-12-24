@@ -97,7 +97,7 @@ public class EasyInputStream extends InputStream
 
 			if (nRead < len)
 			{
-				return read(b, nRead, b.length - nRead);
+				return Math.max(0, read(b, nRead, b.length - nRead)) + nRead;
 			}
 
 			return nRead;
