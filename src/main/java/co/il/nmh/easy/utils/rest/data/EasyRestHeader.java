@@ -74,6 +74,12 @@ public class EasyRestHeader
 		}
 	}
 
+	public void setHeader(String name, String value)
+	{
+		headers.put(name, new ArrayList<String>());
+		headers.get(name).add(value);
+	}
+
 	public Map<String, List<String>> getHeaders()
 	{
 		return headers;
